@@ -3,16 +3,13 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { Suspense } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'motion/react';
 import Home from './pages/Home';
-import { useEffect } from 'react';
 import { useSettingsStore } from './stores/useSettingsStore';
 import { useLanguageStore } from './stores/useLanguageStore';
 import StudioBadgeIcon from './components/ui/StudioBadgeIcon';
-import CustomCursor from './components/ui/CustomCursor';
-import SplashCursor from './components/ui/SplashCursor';
 import ScrollToTop from './components/ui/ScrollToTop';
 import WhatsAppButton from './components/ui/WhatsAppButton';
 import PageTransition from './components/ui/PageTransition';
@@ -40,6 +37,11 @@ const NotFound = React.lazy(() => import('./pages/NotFound'));
 const CMSLayout = React.lazy(() => import('./pages/cms/CMSLayout'));
 const Login = React.lazy(() => import('./pages/cms/Login'));
 
+// Cosmetic pointer effects are heavy WebGL/animation code. Load them only on
+// desktop-class pointers, after the critical page has become interactive.
+const CustomCursor = React.lazy(() => import('./components/ui/CustomCursor'));
+const SplashCursor = React.lazy(() => import('./components/ui/SplashCursor'));
+
 // Minimal fallback loader for Suspense transitions
 const PageLoader = () => (
   <div className="w-full h-screen flex items-center justify-center bg-[#050505] transition-colors duration-500">
@@ -57,7 +59,6 @@ const PageLoader = () => (
   </div>
 );
 
-// We need a helper to wrap elements in Suspense and PageTransition
 const TransitionWrapper = ({ children }: { children: React.ReactNode }) => (
   <PageTransition>
     <Suspense fallback={<PageLoader />}>
@@ -72,14 +73,12 @@ function AnimatedRoutes() {
   return (
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
-        {/* Public Routes */}
         <Route path="/" element={<TransitionWrapper><Home /></TransitionWrapper>} />
         <Route path="/portfolio" element={<TransitionWrapper><Portfolio /></TransitionWrapper>} />
         <Route path="/portfolio/:slug" element={<TransitionWrapper><ProjectDetails /></TransitionWrapper>} />
         <Route path="/websites" element={<TransitionWrapper><ScriptsPage /></TransitionWrapper>} />
         <Route path="/magazine" element={<TransitionWrapper><Magazine /></TransitionWrapper>} />
         <Route path="/magazine/:slug" element={<TransitionWrapper><ArticleDetails /></TransitionWrapper>} />
-        
         <Route path="/articles" element={<TransitionWrapper><Magazine /></TransitionWrapper>} />
         <Route path="/articles/:slug" element={<TransitionWrapper><ArticleDetails /></TransitionWrapper>} />
         <Route path="/covers" element={<TransitionWrapper><CoversPage /></TransitionWrapper>} />
@@ -95,8 +94,6 @@ function AnimatedRoutes() {
         <Route path="/404" element={<TransitionWrapper><NotFound /></TransitionWrapper>} />
         <Route path="/login" element={<TransitionWrapper><Login /></TransitionWrapper>} />
         <Route path="*" element={<TransitionWrapper><NotFound /></TransitionWrapper>} />
-        
-        {/* CMS Routes */}
         <Route path="/cms/*" element={<TransitionWrapper><CMSLayout /></TransitionWrapper>} />
       </Routes>
     </AnimatePresence>
@@ -106,6 +103,27 @@ function AnimatedRoutes() {
 export default function App() {
   const { settings, fetchSettings } = useSettingsStore();
   const { isRTL, language } = useLanguageStore();
+  const [enablePointerEffects, setEnablePointerEffects] = useState(false);
+
+  useEffect(() => {
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const finePointer = window.matchMedia('(pointer: fine)').matches;
+    const desktopWidth = window.matchMedia('(min-width: 1024px)').matches;
+    if (reducedMotion || !finePointer || !desktopWidth) return;
+
+    const win = window as Window & {
+      requestIdleCallback?: (cb: () => void, options?: { timeout: number }) => number;
+      cancelIdleCallback?: (id: number) => void;
+    };
+
+    if (win.requestIdleCallback) {
+      const id = win.requestIdleCallback(() => setEnablePointerEffects(true), { timeout: 1800 });
+      return () => win.cancelIdleCallback?.(id);
+    }
+
+    const id = window.setTimeout(() => setEnablePointerEffects(true), 1200);
+    return () => window.clearTimeout(id);
+  }, []);
   
   useEffect(() => {
     fetchSettings();
@@ -138,8 +156,12 @@ export default function App() {
       <Router>
         <ScrollToTop />
         <WhatsAppButton />
-        <SplashCursor />
-        <CustomCursor />
+        {enablePointerEffects && (
+          <Suspense fallback={null}>
+            <SplashCursor DYE_RESOLUTION={512} CAPTURE_RESOLUTION={256} PRESSURE_ITERATIONS={12} />
+            <CustomCursor />
+          </Suspense>
+        )}
         <GlobalModals />
         <AnimatedRoutes />
       </Router>
