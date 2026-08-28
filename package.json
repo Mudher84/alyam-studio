@@ -1,0 +1,49 @@
+{
+  "name": "react-example",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "tsx server.ts",
+    "build": "vite build && esbuild server.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server.cjs",
+    "start": "node dist/server.cjs",
+    "preview": "vite preview",
+    "clean": "rm -rf dist server.js",
+    "lint": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@google/genai": "latest",
+    "@tiptap/extension-image": "latest",
+    "@tiptap/extension-link": "latest",
+    "@tiptap/extension-placeholder": "latest",
+    "@tiptap/react": "latest",
+    "@tiptap/starter-kit": "latest",
+    "@vitejs/plugin-react": "latest",
+    "clsx": "latest",
+    "dotenv": "latest",
+    "express": "latest",
+    "firebase": "latest",
+    "framer-motion": "latest",
+    "gsap": "latest",
+    "i18next": "latest",
+    "i18next-browser-languagedetector": "latest",
+    "lucide-react": "latest",
+    "motion": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "react-helmet-async": "latest",
+    "react-i18next": "latest",
+    "react-router-dom": "latest",
+    "recharts": "latest",
+    "zustand": "latest"
+  },
+  "devDependencies": {
+    "@types/express": "latest",
+    "@types/node": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "esbuild": "latest",
+    "tsx": "latest",
+    "typescript": "latest",
+    "vite": "latest"
+  }
+}
