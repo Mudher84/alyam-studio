@@ -1,0 +1,152 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@theme {
+  --color-gold-400: #fcd34d;
+  --color-gold-500: #fbbf24;
+  --color-gold-600: #d97706;
+  
+  --color-royal-blue: #1e3a8a; /* deep blue */
+  --color-royal-blue-light: #2563eb;
+  
+  --color-alyam-black: #050505;
+  --color-alyam-gray: #1a1a1a;
+  
+  --color-velvet-beige: #F6F2EB;
+  --color-velvet-beige-light: #FCFAF7;
+  --color-velvet-beige-dark: #ECE5D8;
+  --color-velvet-card: #FAF6F0;
+  --color-velvet-border: #E8DFD1;
+  
+  --font-serif: "Playfair Display", "Cairo", serif;
+  --font-sans: "Cairo", "Plus Jakarta Sans", sans-serif;
+  --font-mono: "Cairo", monospace;
+}
+
+@layer base {
+  :root {
+    --background: #F6F2EB;
+    --foreground: #1c1917;
+  }
+  .dark {
+    --background: #050505;
+    --foreground: #F6F2EB;
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-serif);
+  }
+}
+
+/* RTL / Arabic typography settings */
+html[dir="rtl"],
+[dir="rtl"] {
+  --font-serif: "Playfair Display", "Cairo", serif;
+  --font-sans: "Cairo", "Plus Jakarta Sans", sans-serif;
+  --font-mono: "Cairo", monospace;
+}
+
+/* Global Capsule (Pill) Styling for All Dropdown Selects */
+select {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  border-radius: 9999px !important;
+  padding-left: 1.25rem !important;
+  padding-right: 2.75rem !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23374151' stroke-width='2.25'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 1rem center !important;
+  background-size: 1.1rem !important;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+html[dir="rtl"] select,
+[dir="rtl"] select {
+  padding-right: 1.25rem !important;
+  padding-left: 2.75rem !important;
+  background-position: left 1rem center !important;
+}
+
+/* Compact overrides for Rich Text Editor toolbar selects */
+.rte-toolbar select {
+  border-radius: 9999px !important;
+  padding-left: 0.6rem !important;
+  padding-right: 1.5rem !important;
+  background-position: right 0.4rem center !important;
+  background-size: 0.85rem !important;
+}
+
+html[dir="rtl"] .rte-toolbar select,
+[dir="rtl"] .rte-toolbar select {
+  padding-right: 0.6rem !important;
+  padding-left: 1.5rem !important;
+  background-position: left 0.4rem center !important;
+}
+
+select option {
+  background-color: #ffffff;
+  color: #111827;
+  padding: 10px 16px;
+  font-family: 'Cairo', 'Plus Jakarta Sans', sans-serif;
+  font-size: 14px;
+}
+
+.dark select option {
+  background-color: #1a1a1a;
+  color: #ffffff;
+}
+
+[dir="rtl"] body,
+[dir="rtl"] button,
+[dir="rtl"] input,
+[dir="rtl"] textarea,
+[dir="rtl"] select {
+  font-family: 'Cairo', 'Plus Jakarta Sans', sans-serif;
+  line-height: 1.7;
+}
+
+[dir="rtl"] .font-serif {
+  font-family: "Playfair Display", "Cairo", serif;
+}
+
+[dir="rtl"] .font-sans {
+  font-family: "Cairo", "Plus Jakarta Sans", sans-serif;
+}
+
+[dir="rtl"] [class*="tracking-"] {
+  letter-spacing: normal !important;
+}
+
+/* Utilities for glassmorphism and subtle shadows */
+@layer utilities {
+  .glass {
+    @apply bg-white/10 backdrop-blur-md border border-white/20;
+  }
+  .glass-dark {
+    @apply bg-black/40 backdrop-blur-md border border-white/10;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}

@@ -1,0 +1,64 @@
+{
+  "collections": [
+    {
+      "name": "projects",
+      "description": "Portfolio projects and digital works.",
+      "fields": [
+        { "name": "title", "type": "string", "description": "Project title" },
+        { "name": "slug", "type": "string", "description": "URL slug for the project" },
+        { "name": "description", "type": "string", "description": "Detailed description of the project" },
+        { "name": "category", "type": "string", "description": "Category (e.g., Book Covers, Software, Branding)" },
+        { "name": "teacher", "type": "string", "description": "Teacher associated with the project", "optional": true },
+        { "name": "subject", "type": "string", "description": "Subject of the project", "optional": true },
+        { "name": "year", "type": "string", "description": "Year of completion", "optional": true },
+        { "name": "tags", "type": "array", "description": "Array of string tags", "optional": true },
+        { "name": "softwareUsed", "type": "array", "description": "Array of software used", "optional": true },
+        { "name": "coverImage", "type": "string", "description": "URL of the cover image", "optional": true },
+        { "name": "images", "type": "array", "description": "Array of image URLs", "optional": true },
+        { "name": "createdAt", "type": "timestamp", "description": "Creation timestamp" }
+      ]
+    },
+    {
+      "name": "articles",
+      "description": "Blog/Magazine articles.",
+      "fields": [
+        { "name": "title", "type": "string", "description": "Article title" },
+        { "name": "slug", "type": "string", "description": "URL slug" },
+        { "name": "excerpt", "type": "string", "description": "Short excerpt" },
+        { "name": "content", "type": "string", "description": "Markdown content" },
+        { "name": "category", "type": "string", "description": "Category" },
+        { "name": "tags", "type": "array", "description": "Array of string tags", "optional": true },
+        { "name": "coverImage", "type": "string", "description": "URL of the cover image", "optional": true },
+        { "name": "createdAt", "type": "timestamp", "description": "Creation timestamp" },
+        { "name": "published", "type": "boolean", "description": "Publication status" }
+      ]
+    },
+    {
+      "name": "users",
+      "description": "Admin users.",
+      "fields": [
+        { "name": "email", "type": "string", "description": "User email address" },
+        { "name": "role", "type": "string", "description": "Role, e.g., 'admin'" },
+        { "name": "createdAt", "type": "timestamp", "description": "Creation timestamp" }
+      ]
+    },
+    {
+      "name": "teachers",
+      "description": "Teacher profiles.",
+      "fields": [
+        { "name": "name_ar", "type": "string", "description": "Teacher name in Arabic" },
+        { "name": "name_en", "type": "string", "description": "Teacher name in English" },
+        { "name": "subject_ar", "type": "string", "description": "Subject taught in Arabic", "optional": true },
+        { "name": "subject_en", "type": "string", "description": "Subject taught in English", "optional": true },
+        { "name": "bio_ar", "type": "string", "description": "Biography in Arabic", "optional": true },
+        { "name": "bio_en", "type": "string", "description": "Biography in English", "optional": true },
+        { "name": "avatarUrl", "type": "string", "description": "URL of the avatar image", "optional": true },
+        { "name": "phone", "type": "string", "description": "Phone number", "optional": true },
+        { "name": "status", "type": "string", "description": "Profile status: 'active' or 'inactive'" },
+        { "name": "order", "type": "number", "description": "Custom sorting order" },
+        { "name": "createdAt", "type": "timestamp", "description": "Creation timestamp" },
+        { "name": "updatedAt", "type": "timestamp", "description": "Last updated timestamp" }
+      ]
+    }
+  ]
+}

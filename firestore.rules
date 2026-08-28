@@ -1,0 +1,99 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Reusable helpers
+    function isSignedIn() { return request.auth != null; }
+    function isValidId(id) { return id is string && id.size() <= 128; }
+    function incoming() { return request.resource.data; }
+    function existing() { return resource.data; }
+    
+    // Admin check
+    function isAdmin() {
+      return isSignedIn() && (
+        request.auth.token.email == 'w.mudher@gmail.com' ||
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin'
+      );
+    }
+
+    // Default allow read for diagnostics
+    match /{document=**} {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // Projects
+    match /projects/{projectId} {
+      allow read: if (existing().status == 'published' || isAdmin());
+      allow create: if isAdmin() && isValidProject(incoming());
+      allow update: if isAdmin() && isValidProject(incoming());
+      allow delete: if isAdmin();
+    }
+
+    // Articles
+    match /articles/{articleId} {
+      allow read: if (existing().status == 'published' || isAdmin());
+      allow create: if isAdmin() && isValidArticle(incoming());
+      allow update: if isAdmin() && isValidArticle(incoming());
+      allow delete: if isAdmin();
+
+      match /revisions/{revisionId} {
+        allow read, write: if isAdmin();
+      }
+    }
+
+    // Teachers
+    match /teachers/{teacherId} {
+      allow read: if (existing().status == 'active' || isAdmin());
+      allow create: if isAdmin() && isValidTeacher(incoming());
+      allow update: if isAdmin() && isValidTeacher(incoming());
+      allow delete: if isAdmin();
+    }
+
+    // Settings
+    match /settings/{settingsId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Inquiries
+    match /inquiries/{inquiryId} {
+      allow read, update, delete: if isAdmin();
+      allow create: if isValidInquiry(incoming());
+    }
+
+    // Users (Roles)
+    match /users/{userId} {
+      allow read: if isSignedIn() && (request.auth.uid == userId || isAdmin());
+      allow write: if isAdmin();
+    }
+
+    // Generic match for other collections
+    match /services/{id} { allow read: if true; allow write: if isAdmin(); }
+    match /media/{id} { allow read: if true; allow write: if isAdmin(); }
+    match /pages/{id} { allow read: if true; allow write: if isAdmin(); }
+    match /notifications/{id} { allow read, write: if isAdmin(); }
+    match /activity_logs/{id} { allow read, write: if isAdmin(); }
+    match /analytics_events/{id} { allow create: if true; allow read, write: if isAdmin(); }
+
+    // Validation functions
+    function isValidProject(data) {
+      return data.keys().hasAll(['title', 'slug', 'description', 'category', 'status', 'createdAt', 'updatedAt']) &&
+             data.title is string && data.slug is string && data.status in ['draft', 'published', 'archived'];
+    }
+    
+    function isValidArticle(data) {
+      return data.keys().hasAll(['title', 'slug', 'excerpt', 'content', 'author', 'category', 'status', 'createdAt', 'updatedAt']) &&
+             data.status in ['draft', 'published', 'scheduled', 'archived', 'trash'];
+    }
+
+    function isValidTeacher(data) {
+      return data.keys().hasAll(['name_ar', 'name_en', 'status', 'createdAt', 'updatedAt']);
+    }
+
+    function isValidInquiry(data) {
+      return data.keys().hasAll(['name', 'email', 'subject', 'message', 'status', 'createdAt']) &&
+             data.email is string && data.email.size() < 256;
+    }
+  }
+}

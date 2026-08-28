@@ -1,0 +1,6 @@
+{
+  "name": "ALYAM Studio",
+  "description": "منصة تجربة رقمية عالمية المستوى. معرض أعمال ونظام إدارة محتوى فاخر، بسيط وسينمائي.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
